@@ -1,7 +1,10 @@
 import React from 'react';
-import { Stack, Text, Link, FontWeights, IStackTokens, IStackStyles, ITextStyles } from '@fluentui/react';
+import { Stack, Text,TextField, Link, FontWeights, IStackTokens, IStackStyles, ITextStyles ,IStackProps} from '@fluentui/react';
 import logo from './logo.svg';
 import './App.css';
+import { PeoplePickerControlledExample } from './components/ResourceSelector';
+import { DefaultButton, PrimaryButton } from '@fluentui/react/lib/Button';
+
 
 const boldStyle: Partial<ITextStyles> = { root: { fontWeight: FontWeights.semibold } };
 const stackTokens: IStackTokens = { childrenGap: 15 };
@@ -13,32 +16,42 @@ const stackStyles: Partial<IStackStyles> = {
     color: '#605e5c',
   },
 };
+const columnProps: Partial<IStackProps> = {
+  tokens: { childrenGap: 10 },
+  styles: { root: { width: 300 } },
+};
+function _alertClicked(): void {
+  alert('Clicked');
+}
 
+export interface IButtonExampleProps {
+  // These are set based on the toggles shown above the examples (not needed in real code)
+  disabled?: boolean;
+  checked?: boolean;
+}
 export const App: React.FunctionComponent = () => {
   return (
-    <Stack horizontalAlign="center" verticalAlign="center" verticalFill styles={stackStyles} tokens={stackTokens}>
-      <img className="App-logo" src={logo} alt="logo" />
+    <Stack verticalAlign="center" verticalFill styles={stackStyles} tokens={stackTokens}>
       <Text variant="xxLarge" styles={boldStyle}>
-        Welcome to your Fluent UI app
+        Welcome to Azure Cloud Designer
       </Text>
-      <Text variant="large">For a guide on how to customize this project, check out the Fluent UI documentation.</Text>
-      <Text variant="large" styles={boldStyle}>
-        Essential links
-      </Text>
-      <Stack horizontal tokens={stackTokens} horizontalAlign="center">
-        <Link href="https://developer.microsoft.com/en-us/fluentui#/get-started/web">Docs</Link>
-        <Link href="https://stackoverflow.com/questions/tagged/office-ui-fabric">Stack Overflow</Link>
-        <Link href="https://github.com/microsoft/fluentui/">Github</Link>
-        <Link href="https://twitter.com/fluentui">Twitter</Link>
+      <Stack {...columnProps}>
+      <TextField label="Service Name " required underlined/>
+      <TextField label="Service Identifier " required underlined />
       </Stack>
-      <Text variant="large" styles={boldStyle}>
-        Design system
-      </Text>
-      <Stack horizontal tokens={stackTokens} horizontalAlign="center">
-        <Link href="https://developer.microsoft.com/en-us/fluentui#/styles/web/icons">Icons</Link>
-        <Link href="https://developer.microsoft.com/en-us/fluentui#/styles/web">Styles</Link>
-        <Link href="https://aka.ms/themedesigner">Theme designer</Link>
-      </Stack>
+      <Stack {...columnProps}>
+      <TextField label="Resource Group Name " required underlined/>
+      <TextField label="Owner " required underlined/>
+      </Stack>  
+      <Text >Select the Resource To Generate Templates</Text>
+
+      <PeoplePickerControlledExample></PeoplePickerControlledExample>
+      <Stack horizontal tokens={stackTokens}>
+      <PrimaryButton text="Submit" onClick={_alertClicked} />
+    </Stack>
+
     </Stack>
   );
 };
+
+
