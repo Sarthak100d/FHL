@@ -3,8 +3,7 @@ import { DefaultButton, IButtonStyles } from '@fluentui/react/lib/Button';
 import { Checkbox } from '@fluentui/react/lib/Checkbox';
 import { IPersonaProps, Persona } from '@fluentui/react/lib/Persona';
 import { IBasePickerSuggestionsProps, NormalPeoplePicker } from '@fluentui/react/lib/Pickers';
-//import { people } from '@fluentui/example-data';
-const people=[{
+const resources=[{
   imageUrl: '',
   imageInitials: 'SB',
   text: 'Service Bus',
@@ -56,7 +55,7 @@ export const PeoplePickerControlledExample: React.FunctionComponent = () => {
   const [currentSelectedItems, setCurrentSelectedItems] = React.useState<IPersonaProps[]>([]);
   const [delayResults, setDelayResults] = React.useState(false);
   const [isPickerDisabled, setIsPickerDisabled] = React.useState(false);
-  const [peopleList] = React.useState<IPersonaProps[]>(people);
+  const [peopleList] = React.useState<IPersonaProps[]>(resources);
 
   const picker = React.useRef(null);
 
@@ -93,7 +92,7 @@ export const PeoplePickerControlledExample: React.FunctionComponent = () => {
   };
 
   const controlledItems = [];
-  for (let i = 0; i < people.length; i++) {
+  for (let i = 0; i < resources.length; i++) {
     const item = peopleList[i];
     if (currentSelectedItems!.indexOf(item) === -1) {
       controlledItems.push(peopleList[i]);
