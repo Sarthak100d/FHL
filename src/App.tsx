@@ -7,6 +7,7 @@ import { DefaultButton, PrimaryButton } from '@fluentui/react/lib/Button';
 import { CreateResourceParameters } from './objects/CreateResource.types';
 import { ServiceBus } from './components/ServiceBus';
 import { Resources } from './components/Resources';
+import FileSaver from 'file-saver';
 
 
 const boldStyle: Partial<ITextStyles> = { root: { fontWeight: FontWeights.semibold } };
@@ -28,30 +29,22 @@ const columnProps: Partial<IStackProps> = {
 };
 function _alertClicked(): void {
   alert('Clicked');
-}
-const onChange = (event: SyntheticEvent<HTMLElement, Event>, elementType: string) => {
-  const element = event.target as HTMLInputElement;
-  switch (elementType) {
-    case "ServiceName":
-      console.log(element.value);
-      createResource.serviceName = element.value;
-      break;
-    case "ServiceId":
-      console.log(element.value);
-      createResource.serviceId = element.value;
-      break;
-    case "ResourceGroupName":
-      console.log(element.value);
-      createResource.resourceGroupName = element.value;
-      break;
-    case "Owner":
-      console.log(element.value);
-      createResource.owner = element.value;
-      break;
-    default:
-      break;
-  };
 };
+const downloadFile = () => {
+  // Path to your local ZIP file
+  const fileUrl = '/output/ResourceSelector.zip';
+  
+  // Fetch the file as a Blob object
+  fetch(fileUrl)
+    .then((response) => response.blob())
+    .then((blob) => {
+      // Save the Blob object as a file using FileSaver.js
+      FileSaver.saveAs(blob, 'output.zip');
+    })
+    .catch((error) => {
+      console.error('Error downloading file:', error);
+    })
+}
 
 const onServiceNameChange = (event: SyntheticEvent<HTMLElement, Event>) => {
   createResource.serviceName = (event.target as HTMLTextAreaElement).value;
@@ -96,9 +89,13 @@ export const App: React.FunctionComponent = () => {
       <TextField label="Owner " required underlined onChange={onOwnerChange}/>
       </Stack>  
       <Text >Select the Resource To Generate Templates</Text>
-      {toggle?<PeoplePickerControlledExample />:<Resources/>}
+      {toggle?<PeoplePickerControlledExample />:<Resources />}
       <Stack horizontal tokens={stackTokens}>
       <PrimaryButton text="Next" onClick={onclickFunction} />
+      <DefaultButton
+        text="Download"
+        onClick={downloadFile}
+      />
     </Stack>
 
     </Stack>

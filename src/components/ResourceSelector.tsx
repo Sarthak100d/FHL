@@ -3,34 +3,38 @@ import { DefaultButton, IButtonStyles } from '@fluentui/react/lib/Button';
 import { Checkbox } from '@fluentui/react/lib/Checkbox';
 import { IPersonaProps, Persona } from '@fluentui/react/lib/Persona';
 import { IBasePickerSuggestionsProps, NormalPeoplePicker } from '@fluentui/react/lib/Pickers';
+import { CreateResourceParameters, ResourceTypes } from '../objects/CreateResource.types';
+import { IResourceProps } from './Resources.types';
 const resources=[{
+  id: ResourceTypes.SERVICE_BUS,
   imageUrl: '',
   imageInitials: 'SB',
   text: 'Service Bus',
 },{
+  id: ResourceTypes.KEYVAULT,
   imageUrl: '',
   imageInitials: 'AKV',
   text: 'Key Vault',
 },{
+  id: ResourceTypes.DATABASE,
   imageUrl: '',
   imageInitials: 'ADB',
   text: 'Database',
 },{
+  id: ResourceTypes.CERTIFICATE,
   imageUrl: '',
   imageInitials: 'AC',
   text: 'Certificate',
 },{
+  id: ResourceTypes.AZURE_FUNCTION,
   imageUrl: '',
   imageInitials: 'AF',
   text: 'Azure functions',
 },{
+  id: ResourceTypes.STORAGE_ACCOUNT_BLOB,
   imageUrl: '',
   imageInitials: 'SC',
   text: 'Storage Account',
-},{
-  imageUrl: '',
-  imageInitials: 'AG',
-  text: 'Geneva',
 }
 ];
 const suggestionProps: IBasePickerSuggestionsProps = {
