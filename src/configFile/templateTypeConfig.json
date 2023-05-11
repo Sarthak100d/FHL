@@ -5,6 +5,6 @@
     "azure.ms.sql" : "msSql",
     "azure.keyvault" : "keyVault",
     "azure.storage.blob": "storageAccountBlob",
-    "azure.storage.fileshare": "storageAccountFileShare",
+    "azure.storage.fileshare": "storageAccountFileshare",
     "azure.function": "azureFunction"
 }

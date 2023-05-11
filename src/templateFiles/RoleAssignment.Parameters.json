@@ -1,0 +1,16 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentParameters.json",
+  "contentVersion": "1.0.0.0",
+
+  "parameters": {
+    "genevaAppPrincipalId": {
+      "value": "__GENEVA_WARM_PATH_APP_OBJ_ID__"
+    },
+    "customRoleType": {
+      "value": "__GENEVA_WARM_PATH_CONTRIBUTOR_ROLE__"
+    },
+    "genevaCustomRoleDefinitionId": {
+      "value": "__GENEVA_WARM_PATH_CONTRIBUTOR_ROLE_ID__"
+    }
+  }
+}
