@@ -89,7 +89,7 @@ export const App: React.FunctionComponent = () => {
       <TextField label="Owner " required underlined onChange={onOwnerChange}/>
       </Stack>  
       <Text >Select the Resource To Generate Templates</Text>
-      {toggle?<PeoplePickerControlledExample />:<Resources/>}
+      {toggle?<PeoplePickerControlledExample />:<Resources />}
       <Stack horizontal tokens={stackTokens}>
       <PrimaryButton text="Next" onClick={onclickFunction} />
       <DefaultButton
