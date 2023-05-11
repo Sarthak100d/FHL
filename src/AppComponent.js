@@ -1,20 +1,24 @@
 const fs = require('fs');
 const path = require('path');
 const archiver = require('archiver');
-const { wait } = require('@testing-library/user-event/dist/utils');
-const templateFolderPath = 'templateFiles'; //this contains templates
-const outputFolderPath = 'outTemplateFiles'; //hardcode this
-const stageFolderPath = 'stageTemplateFiles'
+
+const templateFolderPath = 'templateFiles/'; //this contains templates
+const outputFolderPath = 'outTemplateFiles/'; //hardcode this
+const stageFolderPath = 'stageTemplateFiles/'
 const configFilePath = 'configFile/templateTypeConfig.json';
 
 global.serviceBusQueue = serviceBusQueue;
 global.serviceBusTopicSubscription = serviceBusTopicSubscription;
 global.serviceBusTopic = serviceBusTopic;
 global.keyVault = keyVault;
+global.storageAccountBlob = storageAccountBlob;
+global.storageAccountFileshare = storageAccountFileshare;
+global.azureFunction = azureFunction;
+global.msSql = msSql;
 
 var resourceFunctionMap = null;
 
-const jsonStr = "{\"resourceGroupName\":\"xyz\",\"serviceName\":\"abc\",\"serviceTreeId\":\"id\",\"region\":\"us-west\",\"resources\":[{\"id\":\"servicebus1\",\"type\":\"azure.service.topic.subscription\",\"params\":{\"serviceBusNamespaceName\":\"TestFHLServiceBus\",\"serviceBusTopicName\":\"FHLTestTopic\",\"serviceBusSubscriptionName\":\"FHLTestSubscription\"},\"dependsOn\":[]},{\"id\":\"keyvault1\",\"type\":\"azure.keyvault\",\"params\":{\"keyvaultname\":\"testKV\"}}]}";
+const jsonStr = "{\"resourceGroupName\":\"xyz\",\"serviceName\":\"abc\",\"serviceTreeId\":\"id\",\"region\":\"us-west\",\"resources\":[{\"id\":\"servicebus1\",\"type\":\"azure.service.topic.subscription\",\"params\":{\"serviceBusNamespaceName\":\"TestFHLServiceBus\",\"serviceBusTopicName\":\"FHLTestTopic\",\"serviceBusSubscriptionName\":\"FHLTestSubscription\"},\"dependsOn\":[]},{\"id\":\"keyvault1\",\"type\":\"azure.keyvault\",\"params\":{\"keyVaultName\":\"testKV\"}}]}";
 
 const inputObject = JSON.parse(jsonStr);
 
@@ -134,6 +138,9 @@ function createFunctionMapFromJSON(jsonFilePath) {
 
 
 function createZip(sourcePath, destinationPath) {
+  console.log('source path in zip method: ',sourcePath);
+  console.log('dest path in zip method:',destinationPath);
+
     const timestamp = new Date().toISOString().replace(/[-:.]/g, '');
     const zipName = `TemplatesArchive_${timestamp}.zip`;
   
@@ -167,7 +174,8 @@ function createZip(sourcePath, destinationPath) {
 
 //Entry method
 function extractArmTemplates(inputObject) {
-    console.log('Inside extractArmTemplates');
+      console.log('Inside extractArmTemplates');
+
       //load the config file into a map
       resourceFunctionMap = createFunctionMapFromJSON(configFilePath);
       
@@ -199,38 +207,31 @@ function extractArmTemplates(inputObject) {
       }
   
        //create zip and copy to outputFolder
-       createZip(stageFolderPath, outputFolderPath);
+       
+      createZip(stageFolderPath, outputFolderPath);
 
        //removeFolderContents(stageFolderPath);
 }
 
 function replacePlaceholdersInFile(filePath, replacements) {
+  try {
     // Read the file contents
-    fs.readFile(filePath, 'utf8', (err, data) => {
-      if (err) {
-        console.error('Error reading file:', err);
-        return;
-      }
-  
-   
-      // Perform the replacements
-      let modifiedData = data;
-      for (const key in replacements) {
-        const placeholder = `{{PLACEHOLDER}}`;
-        const replacement = replacements[key];
-        modifiedData = modifiedData.replace(new RegExp(placeholder, 'g'), replacement);
-      }
-  
-      // Write the modified data back to the file
-      fs.writeFile(filePath, modifiedData, 'utf8', err => {
-        if (err) {
-          console.error('Error writing file:', err);
-        } else {
-          console.log('Placeholders replaced successfully!');
-        }
-      });
-    });
+    let data = fs.readFileSync(filePath, 'utf8');
+
+    // Perform the replacements
+    for (const key in replacements) {
+      const placeholder = `{{PLACEHOLDER}}`;
+      const replacement = replacements[key];
+      data = data.replace(new RegExp(placeholder, 'g'), replacement);
+    }
+
+    // Write the modified data back to the file
+    fs.writeFileSync(filePath, data, 'utf8');
+    console.log('Placeholders replaced successfully!');
+  } catch (err) {
+    console.error('Error:', err);
   }
+}
 
 
   function copyAndUpdateTemplateParameterFile(matchingTemplateFile, matchinfParameterFile, paramsObject) {
@@ -238,19 +239,19 @@ function replacePlaceholdersInFile(filePath, replacements) {
     if (matchingTemplateFile &&  matchinfParameterFile) {
 
         // Copy the template file to the stage folder
-        var sourceFilePath = path.join(templateFolderPath, matchingTemplateFile);
-        var destinationFilePath = path.join(stageFolderPath, matchingTemplateFile);
-        fs.copyFileSync(sourceFilePath, destinationFilePath);
+        var sourceTemplateFilePath = path.join(templateFolderPath, matchingTemplateFile);
+        var destinationTemplateFilePath = path.join(stageFolderPath, matchingTemplateFile);
+        fs.copyFileSync(sourceTemplateFilePath, destinationTemplateFilePath);
     
         //copy parameter file to stage folder
     
-        sourceFilePath = path.join(templateFolderPath, matchinfParameterFile);
-        destinationFilePath = path.join(stageFolderPath, matchinfParameterFile);
-        fs.copyFileSync(sourceFilePath, destinationFilePath);
+        var sourceParamFilePath = path.join(templateFolderPath, matchinfParameterFile);
+        var destinationParamFilePath = path.join(stageFolderPath, matchinfParameterFile);
+        fs.copyFileSync(sourceParamFilePath, destinationParamFilePath);
       
       
         // Replace values of parameter file with the values passed by user
-        replacePlaceholdersInFile(destinationFilePath, paramsObject);
+        replacePlaceholdersInFile(destinationParamFilePath, paramsObject);
     
         console.log('File copied and updated successfully.');
       } else {
