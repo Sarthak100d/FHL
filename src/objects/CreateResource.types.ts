@@ -3,5 +3,6 @@ export class CreateResourceParameters {
   public serviceId: string | undefined;
   public resourceGroupName: string | undefined;
   public owner: string | undefined;
+  public keyvaults: []
+  public database: []
 }
-
