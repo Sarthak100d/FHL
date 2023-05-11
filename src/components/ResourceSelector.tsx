@@ -48,6 +48,8 @@ const checkboxStyles = {
     marginTop: 10,
   },
 };
+const myInitObject = {}
+export default myInitObject;
 
 const defaultButtonStyles: Partial<IButtonStyles> = { root: { height: 'auto' } };
 

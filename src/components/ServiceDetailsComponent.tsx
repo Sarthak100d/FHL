@@ -2,11 +2,11 @@ import React, { SyntheticEvent} from 'react';
 import { Stack, Text,TextField, Link, FontWeights, IStackTokens, IStackStyles, ITextStyles ,IStackProps} from '@fluentui/react';
 import logo from './logo.svg';
 import './App.css';
-import { PeoplePickerControlledExample } from './components/ResourceSelector';
+import { PeoplePickerControlledExample } from './ResourceSelector';
 import { DefaultButton, PrimaryButton } from '@fluentui/react/lib/Button';
-import { CreateResourceParameters } from './objects/CreateResource.types';
-import { ServiceBus } from './components/ServiceBus';
-import { Resources } from './components/Resources';
+import { CreateResourceParameters } from './../objects/CreateResource.types';
+import { ServiceBus } from './ServiceBus';
+import { Resources } from './Resources';
 
 
 const boldStyle: Partial<ITextStyles> = { root: { fontWeight: FontWeights.semibold } };
@@ -75,13 +75,8 @@ export interface IButtonExampleProps {
   disabled?: boolean;
   checked?: boolean;
 }
-export const App: React.FunctionComponent = () => {
+export const ServiceDetailsComponent: React.FunctionComponent = () => {
   const [toggle, setToggle] = React.useState<(boolean)>(true);
-  const [list, setList] = React.useState([]);
-  const onclickFunction = () => { 
-    setToggle(false);
-
-  }
   return (
     <Stack verticalAlign="center" verticalFill styles={stackStyles} tokens={stackTokens}>
       <Text variant="xxLarge" styles={boldStyle}>
@@ -96,9 +91,7 @@ export const App: React.FunctionComponent = () => {
       <TextField label="Owner " required underlined onChange={onOwnerChange}/>
       </Stack>  
       <Text >Select the Resource To Generate Templates</Text>
-      {toggle?<PeoplePickerControlledExample />:<Resources/>}
       <Stack horizontal tokens={stackTokens}>
-      <PrimaryButton text="Next" onClick={onclickFunction} />
     </Stack>
 
     </Stack>
