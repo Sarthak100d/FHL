@@ -6,7 +6,10 @@ const templateFolderPath = 'templateFiles/'; //this contains templates
 const outputFolderPath = 'outTemplateFiles/'; //hardcode this
 const stageFolderPath = 'stageTemplateFiles/'
 const configFilePath = 'configFile/templateTypeConfig.json';
+const inputObjectFilePath = 'InputObject/inputReqObjectDump.json';
 
+
+/**register functions as variable*/
 global.serviceBusQueue = serviceBusQueue;
 global.serviceBusTopicSubscription = serviceBusTopicSubscription;
 global.serviceBusTopic = serviceBusTopic;
@@ -16,14 +19,62 @@ global.storageAccountFileshare = storageAccountFileshare;
 global.azureFunction = azureFunction;
 global.msSql = msSql;
 
+/**Map to contain resource type and function variable mapping */
 var resourceFunctionMap = null;
 
+
+/**For Testing create a valid JSON string */
 const jsonStr = "{\"resourceGroupName\":\"xyz\",\"serviceName\":\"abc\",\"serviceTreeId\":\"id\",\"region\":\"us-west\",\"resources\":[{\"id\":\"servicebus1\",\"type\":\"azure.service.topic.subscription\",\"params\":{\"serviceBusNamespaceName\":\"TestFHLServiceBus\",\"serviceBusTopicName\":\"FHLTestTopic\",\"serviceBusSubscriptionName\":\"FHLTestSubscription\"},\"dependsOn\":[]},{\"id\":\"keyvault1\",\"type\":\"azure.keyvault\",\"params\":{\"keyVaultName\":\"testKV\"}}]}";
 
+//create JSON object and pass to Entry method
 const inputObject = JSON.parse(jsonStr);
 
-extractArmTemplates(inputObject);
-//register functions as variable
+/**Calling the Entry method from here for testing */
+console.log('Output Template zip name', extractArmTemplates(inputObject));
+
+
+
+/**Entry Method to be Invoked by UI */
+function extractArmTemplates(inputObject) {
+  console.log('Inside extractArmTemplates');
+
+  //load the config file into a map
+  resourceFunctionMap = createFunctionMapFromJSON(configFilePath);
+  
+  //dump the object into a file to store the mandatory params
+  fs.writeFile(inputObjectFilePath, JSON.stringify(inputObject), (error) => {
+      if (error) throw error;
+    });
+
+
+  var resourceObject = inputObject["resources"];
+  var functionVar = null;  
+  for(let i=0; i<resourceObject.length; i++)
+  {
+      try {
+        console.log('here');
+        console.log('print balue:',resourceFunctionMap.get(resourceObject[i].type));
+        functionVar = resourceFunctionMap.get(resourceObject[i].type);
+        if(typeof functionVar === "function")
+        {
+            console.log('calling func');
+            functionVar(resourceObject[i].params);
+        }
+       
+      } catch (error) {
+          console.log("Incorrect resource type passed", error);
+          
+      }
+      
+  }
+
+   //create zip and copy to outputFolder
+  return createZip(stageFolderPath, outputFolderPath);
+
+   //removeFolderContents(stageFolderPath);
+}
+
+
 
 
 
@@ -169,49 +220,10 @@ function createZip(sourcePath, destinationPath) {
   
     archive.finalize();
 
-
+    return zipName;
  }
 
-//Entry method
-function extractArmTemplates(inputObject) {
-      console.log('Inside extractArmTemplates');
 
-      //load the config file into a map
-      resourceFunctionMap = createFunctionMapFromJSON(configFilePath);
-      
-      //dump the object into a file to store the mandatory params
-      fs.writeFile('stageTemplateFiles\inputObject.json', JSON.stringify(inputObject), (error) => {
-          if (error) throw error;
-        });
-  
-  
-      var resourceObject = inputObject["resources"];
-      var functionVar = null;  
-      for(let i=0; i<resourceObject.length; i++)
-      {
-          try {
-            console.log('here');
-            console.log('print balue:',resourceFunctionMap.get(resourceObject[i].type));
-            functionVar = resourceFunctionMap.get(resourceObject[i].type);
-            if(typeof functionVar === "function")
-            {
-                console.log('calling func');
-                functionVar(resourceObject[i].params);
-            }
-           
-          } catch (error) {
-              console.log("Incorrect resource type passed", error);
-              
-          }
-          
-      }
-  
-       //create zip and copy to outputFolder
-       
-      createZip(stageFolderPath, outputFolderPath);
-
-       //removeFolderContents(stageFolderPath);
-}
 
 function replacePlaceholdersInFile(filePath, replacements) {
   try {
