@@ -3,34 +3,39 @@ import { DefaultButton, IButtonStyles } from '@fluentui/react/lib/Button';
 import { Checkbox } from '@fluentui/react/lib/Checkbox';
 import { IPersonaProps, Persona } from '@fluentui/react/lib/Persona';
 import { IBasePickerSuggestionsProps, NormalPeoplePicker } from '@fluentui/react/lib/Pickers';
+import { CreateResourceParameters, ResourceTypes } from '../objects/CreateResource.types';
+import { IResourceProps } from './Resources.types';
+import { Stack } from '@fluentui/react';
 const resources=[{
+  id: ResourceTypes.SERVICE_BUS,
   imageUrl: '',
   imageInitials: 'SB',
   text: 'Service Bus',
 },{
+  id: ResourceTypes.KEYVAULT,
   imageUrl: '',
   imageInitials: 'AKV',
   text: 'Key Vault',
 },{
+  id: ResourceTypes.DATABASE,
   imageUrl: '',
   imageInitials: 'ADB',
   text: 'Database',
 },{
+  id: ResourceTypes.CERTIFICATE,
   imageUrl: '',
   imageInitials: 'AC',
   text: 'Certificate',
 },{
+  id: ResourceTypes.AZURE_FUNCTION,
   imageUrl: '',
   imageInitials: 'AF',
   text: 'Azure functions',
 },{
+  id: ResourceTypes.STORAGE_ACCOUNT_BLOB,
   imageUrl: '',
   imageInitials: 'SC',
   text: 'Storage Account',
-},{
-  imageUrl: '',
-  imageInitials: 'AG',
-  text: 'Geneva',
 }
 ];
 const suggestionProps: IBasePickerSuggestionsProps = {
@@ -48,10 +53,12 @@ const checkboxStyles = {
     marginTop: 10,
   },
 };
+const myInitObject = {}
+export default myInitObject;
 
 const defaultButtonStyles: Partial<IButtonStyles> = { root: { height: 'auto' } };
 
-export const PeoplePickerControlledExample: React.FunctionComponent = () => {
+export const PeoplePickerControlledExample: React.FC<IResourceProps> = ({createResource}) => {
   const [currentSelectedItems, setCurrentSelectedItems] = React.useState<IPersonaProps[]>([]);
   const [delayResults, setDelayResults] = React.useState(false);
   const [isPickerDisabled, setIsPickerDisabled] = React.useState(false);
@@ -89,6 +96,7 @@ export const PeoplePickerControlledExample: React.FunctionComponent = () => {
 
   const onItemsChange = (items: any[]): void => {
     setCurrentSelectedItems(items);
+    createResource.resourcesSelected = currentSelectedItems;
   };
 
   const controlledItems = [];
@@ -99,13 +107,6 @@ export const PeoplePickerControlledExample: React.FunctionComponent = () => {
     }
   }
 
-  const onDisabledButtonClick = (): void => {
-    setIsPickerDisabled(!isPickerDisabled);
-  };
-
-  const onToggleDelayResultsChange = (): void => {
-    setDelayResults(!delayResults);
-  };
 
   return (
     <div>
@@ -137,7 +138,10 @@ export const PeoplePickerControlledExample: React.FunctionComponent = () => {
             <DefaultButton
               styles={defaultButtonStyles}
               // eslint-disable-next-line react/jsx-no-bind
-              onClick={() => setCurrentSelectedItems(currentSelectedItems.concat([item]))}
+              onClick={() => {
+                setCurrentSelectedItems(currentSelectedItems.concat([item]));
+                createResource.resourcesSelected = currentSelectedItems;
+              }}
             >
               <Persona {...item} />
             </DefaultButton>
