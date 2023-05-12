@@ -1,0 +1,10 @@
+{
+    "azure.servicebus.queue" : "serviceBusQueue",
+    "azure.servicebus.topic" : "serviceBusTopic",
+    "azure.service.topic.subscription" : "serviceBusTopicSubscription",
+    "azure.ms.sql" : "msSql",
+    "azure.keyvault" : "keyVault",
+    "azure.storage.blob": "storageAccountBlob",
+    "azure.storage.fileshare": "storageAccountFileshare",
+    "azure.function": "azureFunction"
+}
