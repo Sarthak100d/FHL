@@ -5,7 +5,6 @@ import './App.css';
 import { PeoplePickerControlledExample } from './components/ResourceSelector';
 import { DefaultButton, PrimaryButton } from '@fluentui/react/lib/Button';
 import { CreateResourceParameters } from './objects/CreateResource.types';
-import { ServiceBus } from './components/ServiceBus';
 import { Resources } from './components/Resources';
 import FileSaver from 'file-saver';
 
@@ -89,7 +88,7 @@ export const App: React.FunctionComponent = () => {
       <TextField label="Owner " required underlined onChange={onOwnerChange}/>
       </Stack>  
       <Text >Select the Resource To Generate Templates</Text>
-      {toggle?<PeoplePickerControlledExample />:<Resources />}
+      {toggle?<PeoplePickerControlledExample createResource={createResource}/>:<Resources createResource={createResource}/>}
       <Stack horizontal tokens={stackTokens}>
       <PrimaryButton text="Next" onClick={onclickFunction} />
       <DefaultButton
