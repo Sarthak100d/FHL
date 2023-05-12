@@ -2,6 +2,7 @@ import * as React from 'react';
 import { TextField, MaskedTextField } from '@fluentui/react/lib/TextField';
 import { Stack, IStackProps, IStackStyles } from '@fluentui/react/lib/Stack';
 import { StorageAccountComponent } from './StorageAccountComponent';
+import { IResourceProps } from './Resources.types';
 
 const stackTokens = { childrenGap: 50 };
 const iconProps = { iconName: 'Calendar' };
@@ -11,12 +12,12 @@ const columnProps: Partial<IStackProps> = {
   styles: { root: { width: 300 } },
 };
 
-export const StorageAccount: React.FunctionComponent = () => {
+export const StorageAccount: React.FC<IResourceProps> = ({createResource}) => {
 
-  const [StorageAccountParameters,setStorageAccountParameters] =  React.useState([<StorageAccountComponent/>]);
+  const [StorageAccountParameters,setStorageAccountParameters] =  React.useState([<StorageAccountComponent createResource={createResource}/>]);
   let handleAddPerson = (e: any) => {
     e.preventDefault()
-    setStorageAccountParameters([...StorageAccountParameters,<StorageAccountComponent/>]);
+    setStorageAccountParameters([...StorageAccountParameters,<StorageAccountComponent createResource={createResource}/>]);
 }
   return (
     <>

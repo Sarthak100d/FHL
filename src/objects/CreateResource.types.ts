@@ -25,7 +25,7 @@ export class CreateResourceParameters {
   public serviceId: string | undefined;
   public resourceGroupName: string | undefined;
   public owner: string | undefined;
-  //public resourcesSelected: any[] = [];
+  public resourcesSelected: any[] = [];
   public keyVaultList: Array<KeyVault> | undefined;
   public databaseList: Array<Database> | undefined;
   public serviceBusList: Array<ServiceBus> | undefined;

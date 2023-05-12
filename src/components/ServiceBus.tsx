@@ -2,6 +2,7 @@ import * as React from 'react';
 import { TextField, MaskedTextField } from '@fluentui/react/lib/TextField';
 import { Stack, IStackProps, IStackStyles } from '@fluentui/react/lib/Stack';
 import { ServiceBusComponent } from './ServiceBusComponent';
+import { IResourceProps } from './Resources.types';
 
 const stackTokens = { childrenGap: 50 };
 const iconProps = { iconName: 'Calendar' };
@@ -11,12 +12,12 @@ const columnProps: Partial<IStackProps> = {
   styles: { root: { width: 300 } },
 };
 
-export const ServiceBus: React.FunctionComponent = () => {
+export const ServiceBus: React.FC<IResourceProps> = ({createResource}) => {
 
-  const [serviceBusComponent,setServiceBusComponent] =  React.useState([<ServiceBusComponent/>]);
+  const [serviceBusComponent,setServiceBusComponent] =  React.useState([<ServiceBusComponent createResource={createResource}/>]);
   let handleAddPerson = (e: any) => {
     e.preventDefault()
-    setServiceBusComponent([...serviceBusComponent,<ServiceBusComponent/>]);
+    setServiceBusComponent([...serviceBusComponent,<ServiceBusComponent createResource={createResource}/>]);
 }
   return (
     <>

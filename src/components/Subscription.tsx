@@ -2,6 +2,7 @@ import * as React from 'react';
 import { TextField, MaskedTextField } from '@fluentui/react/lib/TextField';
 import { Stack, IStackProps, IStackStyles } from '@fluentui/react/lib/Stack';
 import { SubscriptionComponent } from './SubscriptionComponent';
+import { IResourceProps } from './Resources.types';
 
 const stackTokens = { childrenGap: 50 };
 const iconProps = { iconName: 'Calendar' };
@@ -11,12 +12,12 @@ const columnProps: Partial<IStackProps> = {
   styles: { root: { width: 300 } },
 };
 
-export const Subscription: React.FunctionComponent = () => {
+export const Subscription: React.FC<IResourceProps> = ({createResource}) => {
 
-  const [SubscriptionParameters,setSubscriptionParameters] =  React.useState([<SubscriptionComponent/>]);
+  const [SubscriptionParameters,setSubscriptionParameters] =  React.useState([<SubscriptionComponent createResource={createResource}/>]);
   let handleAddPerson = (e: any) => {
     e.preventDefault()
-    setSubscriptionParameters([...SubscriptionParameters,<SubscriptionComponent/>]);
+    setSubscriptionParameters([...SubscriptionParameters,<SubscriptionComponent createResource={createResource}/>]);
 }
   return (
     <>
