@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const archiver = require('archiver');
+const http = require('http');
 
 const templateFolderPath = 'templateFiles/'; //this contains templates
 const outputFolderPath = 'outTemplateFiles/'; //hardcode this
@@ -24,13 +25,13 @@ var resourceFunctionMap = null;
 
 
 /**For Testing create a valid JSON string */
-const jsonStr = "{\"resourceGroupName\":\"xyz\",\"serviceName\":\"abc\",\"serviceTreeId\":\"id\",\"region\":\"us-west\",\"resources\":[{\"id\":\"servicebus1\",\"type\":\"azure.service.topic.subscription\",\"params\":{\"serviceBusNamespaceName\":\"TestFHLServiceBus\",\"serviceBusTopicName\":\"FHLTestTopic\",\"serviceBusSubscriptionName\":\"FHLTestSubscription\"},\"dependsOn\":[]},{\"id\":\"keyvault1\",\"type\":\"azure.keyvault\",\"params\":{\"keyVaultName\":\"testKV\"}}]}";
+//const jsonStr = "{\"resourceGroupName\":\"xyz\",\"serviceName\":\"abc\",\"serviceTreeId\":\"id\",\"region\":\"us-west\",\"resources\":[{\"id\":\"servicebus1\",\"type\":\"azure.service.topic.subscription\",\"params\":{\"serviceBusNamespaceName\":\"TestFHLServiceBus\",\"serviceBusTopicName\":\"FHLTestTopic\",\"serviceBusSubscriptionName\":\"FHLTestSubscription\"},\"dependsOn\":[]},{\"id\":\"keyvault1\",\"type\":\"azure.keyvault\",\"params\":{\"keyVaultName\":\"testKV\"}}]}";
 
 //create JSON object and pass to Entry method
-const inputObject = JSON.parse(jsonStr);
+//const inputObject = JSON.parse(jsonStr);
 
 /**Calling the Entry method from here for testing */
-console.log('Output Template zip name', extractArmTemplates(inputObject));
+//console.log('Output Template zip name', extractArmTemplates(inputObject));
 
 
 
@@ -57,7 +58,7 @@ function extractArmTemplates(inputObject) {
         functionVar = resourceFunctionMap.get(resourceObject[i].type);
         if(typeof functionVar === "function")
         {
-            console.log('calling func');
+            console.log('calling func with params: ', resourceObject[i].params);
             functionVar(resourceObject[i].params);
         }
        
@@ -67,6 +68,7 @@ function extractArmTemplates(inputObject) {
       }
       
   }
+
 
    //create zip and copy to outputFolder
   return createZip(stageFolderPath, outputFolderPath);
@@ -80,8 +82,9 @@ function extractArmTemplates(inputObject) {
 
  function serviceBusQueue(paramsObject) {
 
-    const matchingTemplateFile = readdirSync(templateFolderPath).find(file => file.startsWith('ServiceBusQueue') && file.endsWith('Template.json'));
-    const matchinfParameterFile = readdirSync(templateFolderPath).find(file => file.startsWith('ServiceBusQueue') && file.endsWith('Parameter.json'));
+
+    const matchingTemplateFile = fs.readdirSync(templateFolderPath).find(file => file.startsWith('ServiceBusQueue') && file.endsWith('Template.json'));
+    const matchinfParameterFile = fs.readdirSync(templateFolderPath).find(file => file.startsWith('ServiceBusQueue') && file.endsWith('Parameter.json'));
     
     //copy the corresponding template and parameter file to the destination folder and update 
     //the parameters with users value
@@ -91,8 +94,8 @@ function extractArmTemplates(inputObject) {
   
   function serviceBusTopic(paramsObject) {
   
-    const matchingTemplateFile = readdirSync(templateFolderPath).find(file => file.startsWith('ServiceBusTopic') && file.endsWith('Template.json'));
-    const matchinfParameterFile = readdirSync(templateFolderPath).find(file => file.startsWith('ServiceBusTopic') && file.endsWith('Parameter.json'));
+    const matchingTemplateFile = fs.readdirSync(templateFolderPath).find(file => file.startsWith('ServiceBusTopic') && file.endsWith('Template.json'));
+    const matchinfParameterFile = fs.readdirSync(templateFolderPath).find(file => file.startsWith('ServiceBusTopic') && file.endsWith('Parameter.json'));
   
     //copy the corresponding template and parameter file to the destination folder and update 
     //the parameters with users value
@@ -157,8 +160,8 @@ function extractArmTemplates(inputObject) {
 
   function azureFunction(paramsObject) {
   
-    const matchingTemplateFile = fs.readdirSync(templateFolderPath).find(file => file.startsWith('ServiceBusTopicSubscription') && file.endsWith('Template.json'));
-    const matchinfParameterFile = fs.readdirSync(templateFolderPath).find(file => file.startsWith('ServiceBusTopicSubscription') && file.endsWith('Parameter.json'));
+    const matchingTemplateFile = fs.readdirSync(templateFolderPath).find(file => file.startsWith('AzureFunction') && file.endsWith('Template.json'));
+    const matchinfParameterFile = fs.readdirSync(templateFolderPath).find(file => file.startsWith('AzureFunction') && file.endsWith('Parameter.json'));
   
     //copy the corresponding template and parameter file to the destination folder and update 
     //the parameters with users value
@@ -226,14 +229,16 @@ function createZip(sourcePath, destinationPath) {
 
 
 function replacePlaceholdersInFile(filePath, replacements) {
+  //console.log('replacements rcvd: ', replacements);
   try {
     // Read the file contents
     let data = fs.readFileSync(filePath, 'utf8');
 
     // Perform the replacements
     for (const key in replacements) {
-      const placeholder = `{{PLACEHOLDER}}`;
+      const placeholder = `{{${key}}}`;
       const replacement = replacements[key];
+      //console.log('In placeholderss : key: ',key, ' : replacement : ',replacement);
       data = data.replace(new RegExp(placeholder, 'g'), replacement);
     }
 
@@ -294,11 +299,11 @@ function removeFolderContents(folderPath) {
     });
   }
 
-
-
   
 
- 
-//outputFolderPath.timestamp.zip
 
 
+/**Export the method */
+  module.exports = {
+    extractArmTemplates
+  };
