@@ -2,9 +2,8 @@ import React, { SyntheticEvent} from 'react';
 import { Text, TextField, MaskedTextField } from '@fluentui/react';
 import { Stack, IStackProps, IStackStyles } from '@fluentui/react/lib/Stack';
 import { IResourceProps } from './Resources.types';
-import { StorageAccount } from './StorageAccount';
 import { ResourceTypes } from '../objects/CreateResource.types';
-import { StorageAccountParameters } from '../objects/StorageAccount.types';
+import { StorageAccount, StorageAccountParameters } from '../objects/StorageAccount.types';
 
 const stackTokens = { childrenGap: 50 };
 const iconProps = { iconName: 'Calendar' };
